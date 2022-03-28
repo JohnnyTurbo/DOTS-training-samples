@@ -1,4 +1,5 @@
 ﻿using Unity.Entities;
+using Unity.Mathematics;
 
 namespace AutoFarmers
 {
@@ -15,5 +16,7 @@ namespace AutoFarmers
         public float PlantGrowthRate;
         public float PercentSilos;
         public float PercentRocks;
+
+        public int2 FarmSize;
     }
 }
