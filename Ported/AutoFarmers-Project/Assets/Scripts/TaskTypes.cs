@@ -8,5 +8,6 @@ namespace AutoFarmers
         Planting = 1,
         Tilling = 2,
         Mining = 3,
+        None = 4
     }
 }
