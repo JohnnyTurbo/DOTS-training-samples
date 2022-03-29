@@ -12,7 +12,7 @@ namespace AutoFarmers
         {
             // Run code on first update only
             this.Enabled = false;
-            _random.InitState(1234);
+            _random.InitState((uint)System.DateTime.Now.Millisecond);
 
             var farmEntity = GetSingletonEntity<FarmData>();
             var farmData = GetSingleton<FarmData>();
