@@ -31,7 +31,7 @@ namespace AutoFarmers
                     ecb.SetComponent(newPlant, new Scale() {Value = 0f });
 
                     var gridPos = new int2((int)translation.Value.x, (int)translation.Value.z);
-                    TileBufferElement tile = farmBuffer[Utils.FlatIndex(gridPos.x, gridPos.y, farmData.FarmSize.y)];
+                    TileBufferElement tile = farmBuffer[Utilities.FlatIndex(gridPos.x, gridPos.y, farmData.FarmSize.y)];
                     tile.TileState = TileState.Planted;
 
                     ecb.RemoveComponent<PlantingTag>(e);
