@@ -160,7 +160,7 @@ MonoBehaviour:
   PlantPrefab: {fileID: 1953579196360212340, guid: a629cd5108a0dbd439b6877ee5f61a4b, type: 3}
   PlantGrowthRate: 0.1
   PercentSilos: 0.05
-  PercentRocks: 0.8
+  PercentRocks: 0.5
   FarmSize:
     x: 10
     y: 10

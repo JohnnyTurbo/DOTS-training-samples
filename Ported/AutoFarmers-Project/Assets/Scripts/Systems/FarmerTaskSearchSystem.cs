@@ -59,6 +59,15 @@ namespace AutoFarmers
                         y += dy;
                     }
                     Debug.Log($"Cur Best Task: {curBestTask} at pos: {bestTilePos}");
+                    var pathBuffer = EntityManager.AddBuffer<PathBufferElement>(e);
+                    
+                    if (startingPos.x != bestTilePos.x)
+                    {
+                        pathBuffer.Add(new PathBufferElement { Value = new int2(bestTilePos.x, startingPos.y) });
+                    }
+
+                    pathBuffer.Add(new PathBufferElement { Value = bestTilePos });
+
                     EntityManager.AddComponent<TargetData>(e);
                 }).WithStructuralChanges().Run();
         }
