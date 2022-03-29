@@ -29,7 +29,7 @@ namespace AutoFarmers
                 {
                     var curBestTask = TaskTypes.None;
                     var bestTilePos = new int2(-1, -1);
-                    var startingPos = new int2((int)translation.Value.x, (int)translation.Value.z);
+                    var startingPos = translation.Value.ToTileIndex();
                     int X = farmSize.x;
                     int Y = farmSize.y;
                 
@@ -67,7 +67,7 @@ namespace AutoFarmers
                         x += dx;
                         y += dy;
                     }
-                    Debug.Log($"Cur Best Task: {curBestTask} at pos: {bestTilePos}");
+                    //Debug.Log($"Cur Best Task: {curBestTask} at pos: {bestTilePos}");
                     var pathBuffer = ecb.AddBuffer<PathBufferElement>(e);
                     
                     if (startingPos.x != bestTilePos.x)

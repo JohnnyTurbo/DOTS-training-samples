@@ -1,13 +1,12 @@
 ﻿using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
 
 namespace AutoFarmers
 {
     [UpdateAfter(typeof(FarmerTaskSearchSystem))]
-    public partial class TillingSystem : SystemBase
+    public partial class MiningSystem : SystemBase
     {
         private EndSimulationEntityCommandBufferSystem _ecbSystem;
 
@@ -24,25 +23,21 @@ namespace AutoFarmers
             var ecb = _ecbSystem.CreateCommandBuffer();
             
             Entities
-                .WithAll<TillingTag>()
+                .WithAll<MiningTaskTag>()
                 .WithNone<TargetData>()
                 .ForEach((Entity e, in Translation translation) =>
                 {
+
                     var currentPosition = translation.Value.ToTileIndex();
                     var index = Utilities.FlatIndex(currentPosition.x, currentPosition.y, farmData.FarmSize.y);
                     var tile = farmBuffer[index];
-                    tile.TileState = TileState.Tilled;
+                    tile.TileState = TileState.Empty;
                     tile.IsTargeted = false;
-                    var tilledColor = new URPMaterialPropertyBaseColor { Value = new float4
-                    {
-                        x = farmData.TilledColor.r,
-                        y = farmData.TilledColor.g,
-                        z = farmData.TilledColor.b,
-                        w = farmData.TilledColor.a
-                    }};
-                    ecb.SetComponent(tile.TileRenderEntity, tilledColor);
+                    ecb.RemoveComponent<MiningTaskTag>(e);
+                    var rockEntity = tile.OccupiedObject;
+                    ecb.DestroyEntity(rockEntity);
+                    tile.OccupiedObject = Entity.Null;
                     farmBuffer[index] = tile;
-                    ecb.RemoveComponent<TillingTag>(e);
                 }).Run();
         }
     }

@@ -37,6 +37,7 @@ namespace AutoFarmers
     public struct TileBufferElement : IBufferElementData
     {
         public Entity TileRenderEntity;
+        public Entity OccupiedObject;
         public TileState TileState;
         public bool IsTargeted;
     }

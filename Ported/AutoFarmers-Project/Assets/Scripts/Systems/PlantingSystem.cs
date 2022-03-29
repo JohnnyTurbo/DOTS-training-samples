@@ -31,10 +31,12 @@ namespace AutoFarmers
                     ecb.SetComponent(newPlant, translation);
                     ecb.SetComponent(newPlant, new NonUniformScale() {Value = 0f });
 
-                    var gridPos = new int2((int)translation.Value.x, (int)translation.Value.z);
-                    TileBufferElement tile = farmBuffer[Utilities.FlatIndex(gridPos.x, gridPos.y, farmData.FarmSize.y)];
+                    var gridPos = translation.Value.ToTileIndex();
+                    var tileIndex = Utilities.FlatIndex(gridPos.x, gridPos.y, farmData.FarmSize.y);
+                    TileBufferElement tile = farmBuffer[tileIndex];
                     tile.TileState = TileState.Planted;
-
+                    tile.IsTargeted = false;
+                    farmBuffer[tileIndex] = tile;
                     ecb.RemoveComponent<PlantingTag>(e);
                 }).Run();
         }

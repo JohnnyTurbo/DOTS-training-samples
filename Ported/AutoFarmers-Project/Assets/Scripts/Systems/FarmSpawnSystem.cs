@@ -30,23 +30,27 @@ namespace AutoFarmers
                     EntityManager.SetComponentData(newFieldTile, fieldPosition);
 
                     var tileState = TileState.Empty;
-
+                    var occupiedObject = Entity.Null;
+                    
                     if (_random.NextFloat() <= farmData.PercentSilos)
                     {
                         var newSilo = EntityManager.Instantiate(farmData.SiloPrefab);
                         EntityManager.SetComponentData(newSilo, fieldPosition);
                         tileState = TileState.Silo;
+                        occupiedObject = newSilo;
                     }
                     else if (_random.NextFloat() <= farmData.PercentRocks)
                     {
                         var newRock = EntityManager.Instantiate(farmData.RockPrefab);
                         EntityManager.SetComponentData(newRock, fieldPosition);
                         tileState = TileState.Rock;
+                        occupiedObject = newRock;
                     }
 
                     var newTileBufferElement = new TileBufferElement
                     {
                         TileRenderEntity = newFieldTile,
+                        OccupiedObject = occupiedObject,
                         TileState = tileState,
                         IsTargeted = false
                     };

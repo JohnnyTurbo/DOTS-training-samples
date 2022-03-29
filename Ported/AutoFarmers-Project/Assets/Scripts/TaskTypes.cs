@@ -5,10 +5,10 @@ namespace AutoFarmers
 {
     public enum TaskTypes
     {
-        Harvesting = 0,
+        Harvesting = 3,
         Planting = 1,
         Tilling = 2,
-        Mining = 3,
+        Mining = 0,
         None = 4
     }
 
