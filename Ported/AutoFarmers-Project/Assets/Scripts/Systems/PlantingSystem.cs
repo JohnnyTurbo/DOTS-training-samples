@@ -1,5 +1,4 @@
 ﻿using Unity.Entities;
-using Unity.Mathematics;
 using Unity.Transforms;
 
 namespace AutoFarmers
@@ -37,6 +36,7 @@ namespace AutoFarmers
                     tile.TileState = TileState.Planted;
                     tile.IsTargeted = false;
                     farmBuffer[tileIndex] = tile;
+                    
                     ecb.RemoveComponent<PlantingTag>(e);
                 }).Run();
         }
