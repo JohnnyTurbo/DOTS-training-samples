@@ -1,5 +1,6 @@
 ﻿using Unity.Entities;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace AutoFarmers
 {
@@ -18,5 +19,6 @@ namespace AutoFarmers
         public float PercentRocks;
 
         public int2 FarmSize;
+        public Color TilledColor;
     }
 }

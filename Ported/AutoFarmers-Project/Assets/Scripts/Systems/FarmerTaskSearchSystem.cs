@@ -8,11 +8,19 @@ namespace AutoFarmers
 {
     public partial class FarmerTaskSearchSystem : SystemBase
     {
+        private EndSimulationEntityCommandBufferSystem _ecbSystem;
+
+        protected override void OnStartRunning()
+        {
+            _ecbSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+        }
+
         protected override void OnUpdate()
         {
             var farmEntity = GetSingletonEntity<FarmData>();
             var farmBuffer = GetBuffer<TileBufferElement>(farmEntity);
             var farmSize = GetComponent<FarmData>(farmEntity).FarmSize;
+            var ecb = _ecbSystem.CreateCommandBuffer();
             
             Entities
                 .WithNone<TargetData, MiningTaskTag>()
@@ -36,7 +44,7 @@ namespace AutoFarmers
                             int2 curPosition = startingPos + new int2(x, y);
                             if (!(curPosition.x < 0 || curPosition.x >= X || curPosition.y < 0 || curPosition.y >= Y))
                             {
-                                var index = FlatIndex(curPosition.x, curPosition.y, farmSize.y);
+                                var index = Utilities.FlatIndex(curPosition.x, curPosition.y, farmSize.y);
                                 var tile = farmBuffer[index];
                                 if (!tile.IsTargeted)
                                 {
@@ -61,7 +69,7 @@ namespace AutoFarmers
                         y += dy;
                     }
                     Debug.Log($"Cur Best Task: {curBestTask} at pos: {bestTilePos}");
-                    var pathBuffer = EntityManager.AddBuffer<PathBufferElement>(e);
+                    var pathBuffer = ecb.AddBuffer<PathBufferElement>(e);
                     
                     if (startingPos.x != bestTilePos.x)
                     {
@@ -70,14 +78,17 @@ namespace AutoFarmers
 
                     pathBuffer.Add(new PathBufferElement { Value = bestTilePos });
 
-                    EntityManager.AddComponent<TargetData>(e);
+                    ecb.AddComponent<TargetData>(e);
 
-                    EntityManager.AddComponent(e, (curBestTask.TaskType()));
+                    ecb.AddComponent(e, (curBestTask.TaskType()));
 
-                }).WithStructuralChanges().Run();
+                    var tileIndex = Utilities.FlatIndex(bestTilePos.x, bestTilePos.y, farmSize.y);
+                    var destinationTile = farmBuffer[tileIndex];
+                    destinationTile.IsTargeted = true;
+                    farmBuffer[tileIndex] = destinationTile;
+
+                }).Run();
         }
-        
-        private static int FlatIndex(int x, int y, int h) => h * x + y;
     }
 }
 

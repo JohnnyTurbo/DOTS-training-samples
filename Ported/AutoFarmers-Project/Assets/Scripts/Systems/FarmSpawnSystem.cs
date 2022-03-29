@@ -61,7 +61,7 @@ namespace AutoFarmers
             do
             {
                 spawnPosition = _random.NextInt2(int2.zero, farmSize);
-                arrayIndex = FlatIndex(spawnPosition.x, spawnPosition.y, farmSize.y);
+                arrayIndex = Utilities.FlatIndex(spawnPosition.x, spawnPosition.y, farmSize.y);
             } while (farmBuffer[arrayIndex].TileState != TileState.Empty);
 
             var farmerEntity = EntityManager.Instantiate(farmData.FarmerPrefab);
@@ -71,6 +71,5 @@ namespace AutoFarmers
             };
             EntityManager.SetComponentData(farmerEntity, farmerPosition);
         }
-        public static int FlatIndex(int x, int y, int h) => h * x + y;
     }
 }
