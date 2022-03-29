@@ -4,6 +4,7 @@ using Unity.Transforms;
 
 namespace AutoFarmers
 {
+    [UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
     public partial class FarmSpawnSystem : SystemBase
     {
         private Random _random;

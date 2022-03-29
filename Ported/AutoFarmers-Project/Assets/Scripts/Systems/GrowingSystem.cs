@@ -21,7 +21,7 @@ namespace AutoFarmers
             Entities
                 .WithAll<PlantAgeData>()
                 .WithNone<DoneGrowingTag>()
-                .ForEach((Entity e, ref Scale scale, ref PlantAgeData age) =>
+                .ForEach((Entity e, ref NonUniformScale scale, ref PlantAgeData age) =>
                 {
                     if (age.Value >= 1f)
                     {
