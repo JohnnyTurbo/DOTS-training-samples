@@ -8,7 +8,9 @@ namespace AutoFarmers
     public struct MiningTaskTag : IComponentData {}
     
     public struct HarvestingTag : IComponentData {}
-    
+
+    public struct DepositingTag : IComponentData { }
+
     public struct TillingTag : IComponentData {}
     
     public struct PlantingTag : IComponentData {}

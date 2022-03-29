@@ -1,7 +1,6 @@
 ﻿using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
 
 namespace AutoFarmers
 {
@@ -22,10 +21,10 @@ namespace AutoFarmers
             var ecb = _ecbSystem.CreateCommandBuffer();
             
             Entities
-                .WithNone<TargetData, MiningTaskTag>()
+                .WithNone<TargetData, MiningTaskTag, DepositingTag>()
                 .WithNone<HarvestingTag, PlantingTag, TillingTag>()
                 .WithAll<FarmerTag>()
-                .ForEach((Entity e, ref SearchRadiusData radius, in Translation translation) =>
+                .ForEach((Entity e, ref SearchRadiusData radius, ref DynamicBuffer<PathBufferElement> pathBuffer, in Translation translation) =>
                 {
                     var curBestTask = TaskTypes.None;
                     var bestTilePos = new int2(-1, -1);
@@ -67,9 +66,7 @@ namespace AutoFarmers
                         x += dx;
                         y += dy;
                     }
-                    //Debug.Log($"Cur Best Task: {curBestTask} at pos: {bestTilePos}");
-                    var pathBuffer = ecb.AddBuffer<PathBufferElement>(e);
-                    
+                    //Debug.Log($"Cur Best Task: {curBestTask} at pos: {bestTilePos}");                    
                     if (startingPos.x != bestTilePos.x)
                     {
                         pathBuffer.Add(new PathBufferElement { Value = new int2(bestTilePos.x, startingPos.y) });

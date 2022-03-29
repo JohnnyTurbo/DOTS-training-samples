@@ -60,21 +60,25 @@ namespace AutoFarmers
                 }
             }
 
-            farmBuffer = EntityManager.GetBuffer<TileBufferElement>(farmEntity);
-            int arrayIndex;
-            int2 spawnPosition;
-            do
+            int farmerCount = 5;
+            for (int i = 0; i <= farmerCount; i++)
             {
-                spawnPosition = _random.NextInt2(int2.zero, farmSize);
-                arrayIndex = Utilities.FlatIndex(spawnPosition.x, spawnPosition.y, farmSize.y);
-            } while (farmBuffer[arrayIndex].TileState != TileState.Empty);
+                farmBuffer = EntityManager.GetBuffer<TileBufferElement>(farmEntity);
+                int arrayIndex;
+                int2 spawnPosition;
+                do
+                {
+                    spawnPosition = _random.NextInt2(int2.zero, farmSize);
+                    arrayIndex = Utilities.FlatIndex(spawnPosition.x, spawnPosition.y, farmSize.y);
+                } while (farmBuffer[arrayIndex].TileState != TileState.Empty);
 
-            var farmerEntity = EntityManager.Instantiate(farmData.FarmerPrefab);
-            var farmerPosition = new Translation
-            {
-                Value = new float3(spawnPosition.x, 0, spawnPosition.y)
-            };
-            EntityManager.SetComponentData(farmerEntity, farmerPosition);
+                var farmerEntity = EntityManager.Instantiate(farmData.FarmerPrefab);
+                var farmerPosition = new Translation
+                {
+                    Value = new float3(spawnPosition.x, 0, spawnPosition.y)
+                };
+                EntityManager.SetComponentData(farmerEntity, farmerPosition);
+            }
         }
     }
 }

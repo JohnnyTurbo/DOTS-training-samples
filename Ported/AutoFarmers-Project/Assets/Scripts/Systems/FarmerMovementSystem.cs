@@ -45,7 +45,7 @@ namespace AutoFarmers
                     }
                     else // waypoint reached
                     {
-                        Debug.Log("waypoint reached");
+                        //Debug.Log("waypoint reached");
                         pathBuffer.RemoveAt((0));
                     }
 
