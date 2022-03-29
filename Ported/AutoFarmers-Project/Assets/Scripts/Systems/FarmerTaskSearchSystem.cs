@@ -15,7 +15,9 @@ namespace AutoFarmers
             var farmSize = GetComponent<FarmData>(farmEntity).FarmSize;
             
             Entities
-                .WithNone<TargetData>()
+                .WithNone<TargetData, MiningTaskTag>()
+                .WithNone<HarvestingTag, PlantingTag, TillingTag>()
+                .WithAll<FarmerTag>()
                 .ForEach((Entity e, ref SearchRadiusData radius, in Translation translation) =>
                 {
                     var curBestTask = TaskTypes.None;
@@ -69,6 +71,9 @@ namespace AutoFarmers
                     pathBuffer.Add(new PathBufferElement { Value = bestTilePos });
 
                     EntityManager.AddComponent<TargetData>(e);
+
+                    EntityManager.AddComponent(e, (curBestTask.TaskType()));
+
                 }).WithStructuralChanges().Run();
         }
         
