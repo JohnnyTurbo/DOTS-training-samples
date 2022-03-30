@@ -20,7 +20,8 @@ namespace AutoFarmers
             var ecb = CommandBufferSystem.CreateCommandBuffer();
 
             Entities
-                .WithAll<TargetData, FarmerTag>()
+                .WithAll<TargetData>()
+                .WithAny<FarmerTag, DroneTag>()
                 .ForEach((Entity e, ref Translation translation, ref DynamicBuffer<PathBufferElement> pathBuffer, in SpeedData speed) =>
                 {
                     if (pathBuffer.Length == 0)
@@ -30,11 +31,11 @@ namespace AutoFarmers
                         return;
                     }
                     
-                    var destination = new float3(pathBuffer[0].Value.x, 0 , pathBuffer[0].Value.y);
+                    var destination = new float3(pathBuffer[0].Value.x, translation.Value.y, pathBuffer[0].Value.y);
                     
                     var distance = math.distance(destination, translation.Value);
 
-                    var threshold = 0.05f;
+                    var threshold = 0.1;
                     
                     if (distance > threshold)
                     {

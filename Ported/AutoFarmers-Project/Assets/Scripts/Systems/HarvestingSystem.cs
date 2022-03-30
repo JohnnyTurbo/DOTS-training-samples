@@ -23,7 +23,8 @@ namespace AutoFarmers
             var farmBuffer = GetBuffer<TileBufferElement>(farmEntity);
 
             Entities
-                .WithAll<HarvestingTag, FarmerTag>()
+                .WithAll<HarvestingTag>()
+                .WithAny<FarmerTag, DroneTag>()
                 .WithNone<TargetData>()
                 .ForEach((Entity e, ref DynamicBuffer<PathBufferElement> pathBuffer, in Translation translation) =>
                 {
@@ -78,8 +79,8 @@ namespace AutoFarmers
                         x += dx;
                         y += dy;
                     }
-
-                    if (startingPos.x != siloPos.x)
+                    
+                    if (HasComponent<FarmerTag>(e) && startingPos.x != siloPos.x)
                     {
                         pathBuffer.Add(new PathBufferElement { Value = new int2(siloPos.x, startingPos.y) });
                     }

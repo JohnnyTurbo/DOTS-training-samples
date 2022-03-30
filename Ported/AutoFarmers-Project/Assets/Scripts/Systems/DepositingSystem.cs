@@ -25,6 +25,7 @@ namespace AutoFarmers
 
             Entities
                 .WithAll<DepositingTag>()
+                .WithAny<FarmerTag, DroneTag>()
                 .WithNone<TargetData>()
                 .ForEach((Entity e, in DynamicBuffer<Child> childBuffer, in Translation translation) =>
                 {
@@ -48,19 +49,44 @@ namespace AutoFarmers
 
                     if ((siloStats.HarvestCount % farmData.HarvestThreshold) == 0)
                     {
-                        farmStats.FarmerCount += 1;
-                        siloStats.FarmerCount += 1;
+                        farmStats.WorkerCount += 1;
+                        siloStats.WorkerCount += 1;
 
-                        // Spawn farmers
-                        var farmerEntity = EntityManager.Instantiate(farmData.FarmerPrefab);
-                        var farmerPosition = new Translation
+                        if (siloStats.WorkerCount % farmData.DroneThreshold == 0)
                         {
-                            Value = new float3(currentPosition.x, 0, currentPosition.y)
-                        };
-                        var farmerRandom = EntityManager.GetComponentData<RandomData>(farmerEntity);
-                        farmerRandom.Value.InitState((uint)farmerEntity.Index);
-                        ecb.SetComponent(farmerEntity, farmerRandom);
-                        ecb.SetComponent(farmerEntity, farmerPosition);
+                            for (var i = 0; i < farmData.DronesToSpawn; i++)
+                            {
+                                farmStats.DroneCount += 1;
+                                siloStats.DroneCount += 1;
+                                
+                                var droneEntity = EntityManager.Instantiate(farmData.DronePrefab);
+                                var dronePosition = new Translation
+                                {
+                                    Value = new float3(currentPosition.x, 2f, currentPosition.y)
+                                };
+                                var droneRandom = EntityManager.GetComponentData<RandomData>(droneEntity);
+                                droneRandom.Value.InitState((uint)droneEntity.Index);
+                                ecb.SetComponent(droneEntity, droneRandom);
+                                ecb.SetComponent(droneEntity, dronePosition);
+                            }
+                        }
+
+                        else
+                        {
+                            farmStats.FarmerCount += 1;
+                            siloStats.FarmerCount += 1;
+                            
+                            // Spawn farmers
+                            var farmerEntity = EntityManager.Instantiate(farmData.FarmerPrefab);
+                            var farmerPosition = new Translation
+                            {
+                                Value = new float3(currentPosition.x, 0, currentPosition.y)
+                            };
+                            var farmerRandom = EntityManager.GetComponentData<RandomData>(farmerEntity);
+                            farmerRandom.Value.InitState((uint)farmerEntity.Index);
+                            ecb.SetComponent(farmerEntity, farmerRandom);
+                            ecb.SetComponent(farmerEntity, farmerPosition);
+                        }
                     }
 
                     ecb.SetComponent<StatsData>(silo, siloStats);

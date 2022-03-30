@@ -6,6 +6,7 @@ namespace AutoFarmers
     public struct StatsData : IComponentData
     {
         public int HarvestCount;
+        public int WorkerCount;
         public int FarmerCount;
         public int DroneCount;
     }

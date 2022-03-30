@@ -13,6 +13,11 @@ GameObject:
   - component: {fileID: 2789771122002104048}
   - component: {fileID: 4620337189431771179}
   - component: {fileID: 3035456797492667365}
+  - component: {fileID: 4452764219378756231}
+  - component: {fileID: -5317761711078726980}
+  - component: {fileID: 2554763942878427368}
+  - component: {fileID: -5168794159602916290}
+  - component: {fileID: -5010152015312238174}
   m_Layer: 0
   m_Name: Drone
   m_TagString: Untagged
@@ -114,3 +119,68 @@ MonoBehaviour:
     y: 0
     z: 0
     w: 0
+--- !u!114 &4452764219378756231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7376520576645055225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32a0598ca2b34e76b58239b714905850, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Value:
+    state: 0
+--- !u!114 &-5317761711078726980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7376520576645055225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30a421f2dd254064a47854bb6fe71980, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2554763942878427368
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7376520576645055225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9e88b5380b144e09752cc2e9323a67a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Value: 50
+--- !u!114 &-5168794159602916290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7376520576645055225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27ea2846e9fd4b82b4daab11a26af76b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Values: []
+--- !u!114 &-5010152015312238174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7376520576645055225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb3ce661b70e42ceb1eddd71ed2a5762, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Value: 5
