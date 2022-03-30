@@ -19,7 +19,7 @@ namespace AutoFarmers
             var farmBuffer = GetBuffer<TileBufferElement>(farmEntity);
             var farmSize = GetComponent<FarmData>(farmEntity).FarmSize;
             var ecb = _ecbSystem.CreateCommandBuffer();
-            
+
             Entities
                 .WithNone<TargetData, MiningTaskTag, DepositingTag>()
                 .WithNone<HarvestingTag, PlantingTag, TillingTag>()
@@ -29,9 +29,11 @@ namespace AutoFarmers
                     var curBestTask = TaskTypes.None;
                     var bestTilePos = new int2(-1, -1);
                     var startingPos = translation.Value.ToTileIndex();
+                    var lastValidPos = new int2(-1, -1);
+
                     int X = farmSize.x;
                     int Y = farmSize.y;
-                
+
                     int x, y, dx, dy;
                     x = y = dx = 0;
                     dy = -1;
@@ -42,6 +44,8 @@ namespace AutoFarmers
                             int2 curPosition = startingPos + new int2(x, y);
                             if (!(curPosition.x < 0 || curPosition.x >= X || curPosition.y < 0 || curPosition.y >= Y))
                             {
+                                lastValidPos = curPosition;
+
                                 var index = Utilities.FlatIndex(curPosition.x, curPosition.y, farmSize.y);
                                 var tile = farmBuffer[index];
                                 if (!tile.IsTargeted)
@@ -66,6 +70,16 @@ namespace AutoFarmers
                         x += dx;
                         y += dy;
                     }
+
+                    if (curBestTask == TaskTypes.None)
+                    {
+                        bestTilePos = lastValidPos;
+                    }
+                    else
+                    {
+                        ecb.AddComponent(e, (curBestTask.TaskType()));
+                    }
+
                     //Debug.Log($"Cur Best Task: {curBestTask} at pos: {bestTilePos}");                    
                     if (startingPos.x != bestTilePos.x)
                     {
@@ -76,13 +90,10 @@ namespace AutoFarmers
 
                     ecb.AddComponent<TargetData>(e);
 
-                    ecb.AddComponent(e, (curBestTask.TaskType()));
-
                     var tileIndex = Utilities.FlatIndex(bestTilePos.x, bestTilePos.y, farmSize.y);
                     var destinationTile = farmBuffer[tileIndex];
                     destinationTile.IsTargeted = true;
                     farmBuffer[tileIndex] = destinationTile;
-
                 }).Run();
         }
     }

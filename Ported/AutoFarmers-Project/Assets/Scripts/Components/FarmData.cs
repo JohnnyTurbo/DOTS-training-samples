@@ -18,6 +18,8 @@ namespace AutoFarmers
         public float PercentSilos;
         public float PercentRocks;
 
+        public int HarvestThreshold; // number of harvests before spawning a farmer
+
         public int2 FarmSize;
         public Color TilledColor;
     }

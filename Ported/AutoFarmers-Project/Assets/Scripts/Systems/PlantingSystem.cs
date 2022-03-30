@@ -3,6 +3,7 @@ using Unity.Transforms;
 
 namespace AutoFarmers
 {
+    [UpdateInGroup(typeof(SimulationSystemGroup), OrderLast = true)]
     [UpdateAfter(typeof(FarmerTaskSearchSystem))]
     public partial class PlantingSystem : SystemBase
     {

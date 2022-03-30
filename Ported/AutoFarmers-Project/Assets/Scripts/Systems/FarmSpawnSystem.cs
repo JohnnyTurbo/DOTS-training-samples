@@ -17,6 +17,7 @@ namespace AutoFarmers
 
             var farmEntity = GetSingletonEntity<FarmData>();
             var farmData = GetSingleton<FarmData>();
+            var farmStats = GetComponent<StatsData>(farmEntity);
             var farmSize = farmData.FarmSize;
 
             var farmBuffer = EntityManager.AddBuffer<TileBufferElement>(farmEntity);
@@ -31,7 +32,7 @@ namespace AutoFarmers
 
                     var tileState = TileState.Empty;
                     var occupiedObject = Entity.Null;
-                    
+
                     if (_random.NextFloat() <= farmData.PercentSilos)
                     {
                         var newSilo = EntityManager.Instantiate(farmData.SiloPrefab);
@@ -60,8 +61,8 @@ namespace AutoFarmers
                 }
             }
 
-            int farmerCount = 5;
-            for (int i = 0; i <= farmerCount; i++)
+            int farmerCount = 1;
+            for (int i = 0; i < farmerCount; i++)
             {
                 farmBuffer = EntityManager.GetBuffer<TileBufferElement>(farmEntity);
                 int arrayIndex;
@@ -70,6 +71,9 @@ namespace AutoFarmers
                 {
                     spawnPosition = _random.NextInt2(int2.zero, farmSize);
                     arrayIndex = Utilities.FlatIndex(spawnPosition.x, spawnPosition.y, farmSize.y);
+
+                    farmStats.FarmerCount += 1;
+
                 } while (farmBuffer[arrayIndex].TileState != TileState.Empty);
 
                 var farmerEntity = EntityManager.Instantiate(farmData.FarmerPrefab);
@@ -79,6 +83,8 @@ namespace AutoFarmers
                 };
                 EntityManager.SetComponentData(farmerEntity, farmerPosition);
             }
+
+            EntityManager.SetComponentData(farmEntity, farmStats);
         }
     }
 }
