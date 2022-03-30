@@ -7,7 +7,7 @@ namespace AutoFarmers
     public partial class FarmerTaskSearchSystem : SystemBase
     {
         private EndSimulationEntityCommandBufferSystem _ecbSystem;
-
+        
         protected override void OnStartRunning()
         {
             _ecbSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
@@ -24,7 +24,7 @@ namespace AutoFarmers
                 .WithNone<TargetData, MiningTaskTag, DepositingTag>()
                 .WithNone<HarvestingTag, PlantingTag, TillingTag>()
                 .WithAll<FarmerTag>()
-                .ForEach((Entity e, ref SearchRadiusData radius, ref DynamicBuffer<PathBufferElement> pathBuffer, in Translation translation) =>
+                .ForEach((Entity e, ref SearchRadiusData radius, ref DynamicBuffer<PathBufferElement> pathBuffer, ref RandomData random, in Translation translation) =>
                 {
                     var curBestTask = TaskTypes.None;
                     var bestTilePos = new int2(-1, -1);
@@ -35,8 +35,14 @@ namespace AutoFarmers
                     int Y = farmSize.y;
 
                     int x, y, dx, dy;
-                    x = y = dx = 0;
-                    dy = -1;
+                    x = y = 0;                    
+                    do
+                    {
+                        dy = random.Value.NextInt(-1, 2);
+                        dx = random.Value.NextInt(-1, 2);
+                    } while (dx == 0 && dy == 0);
+                    
+
                     for (var i = 0; i < radius.Value; i++)
                     {
                         if ((-X / 2 <= x) && (x <= X / 2) && (-Y / 2 <= y) && (y <= Y / 2))
@@ -71,6 +77,8 @@ namespace AutoFarmers
                         y += dy;
                     }
 
+                 
+                    
                     if (curBestTask == TaskTypes.None)
                     {
                         bestTilePos = lastValidPos;
@@ -78,6 +86,10 @@ namespace AutoFarmers
                     else
                     {
                         ecb.AddComponent(e, (curBestTask.TaskType()));
+                        var tileIndex = Utilities.FlatIndex(bestTilePos.x, bestTilePos.y, farmSize.y);
+                        var destinationTile = farmBuffer[tileIndex];
+                        destinationTile.IsTargeted = true;
+                        farmBuffer[tileIndex] = destinationTile;
                     }
 
                     //Debug.Log($"Cur Best Task: {curBestTask} at pos: {bestTilePos}");                    
@@ -89,11 +101,7 @@ namespace AutoFarmers
                     pathBuffer.Add(new PathBufferElement { Value = bestTilePos });
 
                     ecb.AddComponent<TargetData>(e);
-
-                    var tileIndex = Utilities.FlatIndex(bestTilePos.x, bestTilePos.y, farmSize.y);
-                    var destinationTile = farmBuffer[tileIndex];
-                    destinationTile.IsTargeted = true;
-                    farmBuffer[tileIndex] = destinationTile;
+                   
                 }).Run();
         }
     }

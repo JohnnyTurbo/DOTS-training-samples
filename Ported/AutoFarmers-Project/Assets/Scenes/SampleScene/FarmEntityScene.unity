@@ -159,13 +159,13 @@ MonoBehaviour:
   FieldPrefab: {fileID: 2956741789312521163, guid: 440274df01c77e04683b2e559b0cb9b4, type: 3}
   SiloPrefab: {fileID: 2772964537978156645, guid: 3a3e67331d0c67e4ea92d3bda980e438, type: 3}
   PlantPrefab: {fileID: 1953579196360212340, guid: a629cd5108a0dbd439b6877ee5f61a4b, type: 3}
-  PlantGrowthRate: 0.4
+  PlantGrowthRate: 0.1
   PercentSilos: 0.05
   PercentRocks: 0.2
   HarvestThreshold: 2
   FarmSize:
-    x: 30
-    y: 30
+    x: 5
+    y: 5
   TilledColor: {r: 0.8962264, g: 0.69454587, b: 0.13950695, a: 1}
 --- !u!4 &556232102
 Transform:
@@ -194,4 +194,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HarvestCount: 0
-  WorkerCount: 0
+  FarmerCount: 0
+  DroneCount: 0

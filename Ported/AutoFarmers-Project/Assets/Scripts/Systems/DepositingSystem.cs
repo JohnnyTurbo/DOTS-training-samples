@@ -57,6 +57,9 @@ namespace AutoFarmers
                         {
                             Value = new float3(currentPosition.x, 0, currentPosition.y)
                         };
+                        var farmerRandom = EntityManager.GetComponentData<RandomData>(farmerEntity);
+                        farmerRandom.Value.InitState((uint)farmerEntity.Index);
+                        ecb.SetComponent(farmerEntity, farmerRandom);
                         ecb.SetComponent(farmerEntity, farmerPosition);
                     }
 

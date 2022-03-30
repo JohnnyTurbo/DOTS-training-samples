@@ -38,15 +38,16 @@ namespace AutoFarmers
                     farmBuffer[tileIndex] = tile;
                     ecb.AddComponent<Parent>(plant);
                     ecb.AddComponent<LocalToParent>(plant);
-                    ecb.SetComponent(plant, new Translation() { Value = 0});
+                    ecb.SetComponent(plant, new Translation() { Value = new float3(0,1,0)});
                     ecb.SetComponent(plant, new Parent() { Value = e});
 
                     int x, y, dx, dy;
                     x = y = dx = 0;
                     dy = -1;
+
                     int X = farmData.FarmSize.x;
                     int Y = farmData.FarmSize.y;
-                    int maxTiles = (int)(math.pow(math.max(X, Y), 2));
+                    int maxTiles = (int)(math.pow(math.max(X, Y), 2)) * 4;
                     int2 startingPos = translation.Value.ToTileIndex();
                     int2 siloPos = new int2();
 
