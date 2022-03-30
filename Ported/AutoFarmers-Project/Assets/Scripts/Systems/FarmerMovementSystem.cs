@@ -49,7 +49,6 @@ namespace AutoFarmers
                         //Debug.Log("waypoint reached");
                         pathBuffer.RemoveAt((0));
                     }
-
                 }).Run();
         }
     }

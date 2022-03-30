@@ -8,6 +8,7 @@ namespace AutoFarmers
     public partial class FarmSpawnSystem : SystemBase
     {
         private Random _random;
+        public Entity FarmEntity;
 
         protected override void OnUpdate()
         {
@@ -15,12 +16,12 @@ namespace AutoFarmers
             this.Enabled = false;
             _random.InitState((uint)System.DateTime.Now.Millisecond);
 
-            var farmEntity = GetSingletonEntity<FarmData>();
+            FarmEntity = GetSingletonEntity<FarmData>();
             var farmData = GetSingleton<FarmData>();
-            var farmStats = GetComponent<StatsData>(farmEntity);
+            var farmStats = GetComponent<StatsData>(FarmEntity);
             var farmSize = farmData.FarmSize;
 
-            var farmBuffer = EntityManager.AddBuffer<TileBufferElement>(farmEntity);
+            var farmBuffer = EntityManager.AddBuffer<TileBufferElement>(FarmEntity);
 
             for (var x = 0; x < farmSize.x; x++)
             {
@@ -56,7 +57,7 @@ namespace AutoFarmers
                         IsTargeted = false
                     };
 
-                    farmBuffer = EntityManager.GetBuffer<TileBufferElement>(farmEntity);
+                    farmBuffer = EntityManager.GetBuffer<TileBufferElement>(FarmEntity);
                     farmBuffer.Add(newTileBufferElement);
                 }
             }
@@ -116,18 +117,16 @@ namespace AutoFarmers
             int farmerCount = 1;
             for (int i = 0; i < farmerCount; i++)
             {
-                farmBuffer = EntityManager.GetBuffer<TileBufferElement>(farmEntity);
+                farmBuffer = EntityManager.GetBuffer<TileBufferElement>(FarmEntity);
                 int arrayIndex;
                 int2 spawnPosition;
                 do
                 {
                     spawnPosition = _random.NextInt2(int2.zero, farmSize);
                     arrayIndex = Utilities.FlatIndex(spawnPosition.x, spawnPosition.y, farmSize.y);
-
-                    farmStats.FarmerCount += 1;
-
                 } while (farmBuffer[arrayIndex].TileState != TileState.Empty);
-
+                
+                farmStats.FarmerCount += 1;
                 var farmerEntity = EntityManager.Instantiate(farmData.FarmerPrefab);
                 var farmerPosition = new Translation
                 {
@@ -139,7 +138,7 @@ namespace AutoFarmers
                 EntityManager.SetComponentData(farmerEntity, farmerPosition);
             }
 
-            EntityManager.SetComponentData(farmEntity, farmStats);
+            EntityManager.SetComponentData(FarmEntity, farmStats);
         }
     }
 }
