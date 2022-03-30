@@ -1,6 +1,5 @@
 ﻿using Unity.Entities;
 using Unity.Mathematics;
-using UnityEngine;
 
 namespace AutoFarmers
 {
@@ -11,6 +10,7 @@ namespace AutoFarmers
         public Entity DronePrefab;
         public Entity RockPrefab;
         public Entity FieldPrefab;
+        public Entity TilledPrefab;
         public Entity SiloPrefab;
         public Entity PlantPrefab;
 
@@ -26,7 +26,6 @@ namespace AutoFarmers
         public int DefaultDroneSearchRadius;
         
         public int2 FarmSize;
-        public Color TilledColor;
 
         public int MaxFarmSize => FarmSize.x * FarmSize.y * 4;
     }

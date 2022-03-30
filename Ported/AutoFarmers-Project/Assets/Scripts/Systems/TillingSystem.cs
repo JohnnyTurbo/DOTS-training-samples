@@ -1,8 +1,5 @@
 ﻿using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Rendering;
 using Unity.Transforms;
-using UnityEngine;
 
 namespace AutoFarmers
 {
@@ -22,7 +19,8 @@ namespace AutoFarmers
             var farmBuffer = GetBuffer<TileBufferElement>(farmEntity);
             var farmData = GetComponent<FarmData>(farmEntity);
             var ecb = _ecbSystem.CreateCommandBuffer();
-            
+            var newTileBuffer = GetBuffer<SpawnedTileBufferElement>(farmEntity);
+
             Entities
                 .WithAll<TillingTag>()
                 .WithNone<TargetData>()
@@ -33,14 +31,14 @@ namespace AutoFarmers
                     var tile = farmBuffer[index];
                     tile.TileState = TileState.Tilled;
                     tile.IsTargeted = false;
-                    var tilledColor = new URPMaterialPropertyBaseColor { Value = new float4
-                    {
-                        x = farmData.TilledColor.r,
-                        y = farmData.TilledColor.g,
-                        z = farmData.TilledColor.b,
-                        w = farmData.TilledColor.a
-                    }};
-                    ecb.SetComponent(tile.TileRenderEntity, tilledColor);
+
+                    var renderer = tile.TileRenderEntity;
+                    var newFieldTile = ecb.Instantiate(farmData.TilledPrefab);
+                    var fieldPosition = GetComponent<Translation>(renderer);
+                    ecb.SetComponent(newFieldTile, fieldPosition);
+                    ecb.DestroyEntity(renderer);
+                    ecb.AppendToBuffer(farmEntity, new SpawnedTileBufferElement() { index = index, tileRenderer = newFieldTile });
+
                     farmBuffer[index] = tile;
                     ecb.RemoveComponent<TillingTag>(e);
                 }).Run();

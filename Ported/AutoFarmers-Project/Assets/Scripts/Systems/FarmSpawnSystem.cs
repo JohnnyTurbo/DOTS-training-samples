@@ -8,7 +8,6 @@ namespace AutoFarmers
     public partial class FarmSpawnSystem : SystemBase
     {
         private Random _random;
-        public Entity FarmEntity;
 
         protected override void OnUpdate()
         {
@@ -16,12 +15,17 @@ namespace AutoFarmers
             this.Enabled = false;
             _random.InitState((uint)System.DateTime.Now.Millisecond);
 
-            FarmEntity = GetSingletonEntity<FarmData>();
+            var farmEntity = GetSingletonEntity<FarmData>();
             var farmData = GetSingleton<FarmData>();
-            var farmStats = GetComponent<StatsData>(FarmEntity);
+            var farmStats = GetComponent<StatsData>(farmEntity);
             var farmSize = farmData.FarmSize;
 
-            var farmBuffer = EntityManager.AddBuffer<TileBufferElement>(FarmEntity);
+            float siloY = GetComponent<NonUniformScale>(farmData.SiloPrefab).Value.y;
+            float rockY = GetComponent<NonUniformScale>(farmData.RockPrefab).Value.y;
+
+            var farmBuffer = EntityManager.AddBuffer<TileBufferElement>(farmEntity);
+            EntityManager.AddBuffer<SpawnedPlantBufferElement>(farmEntity);
+            EntityManager.AddBuffer<SpawnedTileBufferElement>(farmEntity);
 
             for (var x = 0; x < farmSize.x; x++)
             {
@@ -37,14 +41,14 @@ namespace AutoFarmers
                     if (_random.NextFloat() <= farmData.PercentSilos)
                     {
                         var newSilo = EntityManager.Instantiate(farmData.SiloPrefab);
-                        EntityManager.SetComponentData(newSilo, fieldPosition);
+                        EntityManager.SetComponentData(newSilo, new Translation() {Value = new float3(x, siloY, y) });
                         tileState = TileState.Silo;
                         occupiedObject = newSilo;
                     }
                     else if (_random.NextFloat() <= farmData.PercentRocks)
                     {
                         var newRock = EntityManager.Instantiate(farmData.RockPrefab);
-                        EntityManager.SetComponentData(newRock, fieldPosition);
+                        EntityManager.SetComponentData(newRock, new Translation() { Value = new float3(x, rockY / 2f, y) });
                         tileState = TileState.Rock;
                         occupiedObject = newRock;
                     }
@@ -57,7 +61,7 @@ namespace AutoFarmers
                         IsTargeted = false
                     };
 
-                    farmBuffer = EntityManager.GetBuffer<TileBufferElement>(FarmEntity);
+                    farmBuffer = EntityManager.GetBuffer<TileBufferElement>(farmEntity);
                     farmBuffer.Add(newTileBufferElement);
                 }
             }
@@ -117,16 +121,18 @@ namespace AutoFarmers
             int farmerCount = 1;
             for (int i = 0; i < farmerCount; i++)
             {
-                farmBuffer = EntityManager.GetBuffer<TileBufferElement>(FarmEntity);
+                farmBuffer = EntityManager.GetBuffer<TileBufferElement>(farmEntity);
                 int arrayIndex;
                 int2 spawnPosition;
                 do
                 {
                     spawnPosition = _random.NextInt2(int2.zero, farmSize);
                     arrayIndex = Utilities.FlatIndex(spawnPosition.x, spawnPosition.y, farmSize.y);
+
+                    farmStats.FarmerCount += 1;
+
                 } while (farmBuffer[arrayIndex].TileState != TileState.Empty);
-                
-                farmStats.FarmerCount += 1;
+
                 var farmerEntity = EntityManager.Instantiate(farmData.FarmerPrefab);
                 var farmerPosition = new Translation
                 {
@@ -138,7 +144,7 @@ namespace AutoFarmers
                 EntityManager.SetComponentData(farmerEntity, farmerPosition);
             }
 
-            EntityManager.SetComponentData(FarmEntity, farmStats);
+            EntityManager.SetComponentData(farmEntity, farmStats);
         }
     }
 }
