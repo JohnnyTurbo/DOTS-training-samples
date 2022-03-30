@@ -1,5 +1,6 @@
 ﻿using System;
 using Unity.Entities;
+using Unity.Mathematics;
 
 namespace AutoFarmers
 {
@@ -39,6 +40,7 @@ namespace AutoFarmers
         public Entity TileRenderEntity;
         public Entity OccupiedObject;
         public TileState TileState;
+        public int2 ClosestSiloLocation;
         public bool IsTargeted;
     }
 }

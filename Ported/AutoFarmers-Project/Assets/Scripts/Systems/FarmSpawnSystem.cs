@@ -61,6 +61,58 @@ namespace AutoFarmers
                 }
             }
 
+            // Pre-cache the location to the destination silo
+            for (var startX = 0; startX < farmSize.x; startX++)
+            {
+                for (var startY = 0; startY < farmSize.y; startY++)
+                {
+                    // Find a silo location
+                    int x, y, dx, dy;
+                    x = y = dx = 0;
+                    dy = -1;
+
+                    int X = farmData.FarmSize.x;
+                    int Y = farmData.FarmSize.y;
+                    int maxTiles = (int)(math.pow(math.max(X, Y), 2)) * 4;
+                    int2 startingPos = new int2(startX, startY);
+                    int2 siloPos = new int2();
+
+                    for (var i = 0; i < maxTiles; i++)
+                    {
+                        if ((-X / 2 <= x) && (x <= X / 2) && (-Y / 2 <= y) && (y <= Y / 2))
+                        {
+                            int2 curPosition = startingPos + new int2(x, y);
+
+                            if (!(curPosition.x < 0 || curPosition.x >= X || curPosition.y < 0 || curPosition.y >= Y))
+                            {
+                                var spiralIndex = Utilities.FlatIndex(curPosition.x, curPosition.y, farmData.FarmSize.y);
+                                var curTile = farmBuffer[spiralIndex];
+                                if (curTile.TileState == TileState.Silo)
+                                {
+                                    siloPos = curPosition;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if ((x == y) || ((x < 0) && (x == -y)) || ((x > 0) && (x == 1 - y)))
+                        {
+                            var t = dx;
+                            dx = -dy;
+                            dy = t;
+                        }
+
+                        x += dx;
+                        y += dy;
+                    }
+
+                    var index = Utilities.FlatIndex(startX, startY, farmSize.y);
+                    var tile = farmBuffer[index];
+                    tile.ClosestSiloLocation = siloPos;
+                    farmBuffer[index] = tile;
+                }
+            }
+
             int farmerCount = 1;
             for (int i = 0; i < farmerCount; i++)
             {
