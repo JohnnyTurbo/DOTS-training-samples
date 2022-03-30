@@ -20,7 +20,12 @@ namespace AutoFarmers
             var farmStats = GetComponent<StatsData>(farmEntity);
             var farmSize = farmData.FarmSize;
 
+            float siloY = GetComponent<NonUniformScale>(farmData.SiloPrefab).Value.y;
+            float rockY = GetComponent<NonUniformScale>(farmData.RockPrefab).Value.y;
+
             var farmBuffer = EntityManager.AddBuffer<TileBufferElement>(farmEntity);
+            EntityManager.AddBuffer<SpawnedPlantBufferElement>(farmEntity);
+            EntityManager.AddBuffer<SpawnedTileBufferElement>(farmEntity);
 
             for (var x = 0; x < farmSize.x; x++)
             {
@@ -36,14 +41,14 @@ namespace AutoFarmers
                     if (_random.NextFloat() <= farmData.PercentSilos)
                     {
                         var newSilo = EntityManager.Instantiate(farmData.SiloPrefab);
-                        EntityManager.SetComponentData(newSilo, fieldPosition);
+                        EntityManager.SetComponentData(newSilo, new Translation() {Value = new float3(x, siloY, y) });
                         tileState = TileState.Silo;
                         occupiedObject = newSilo;
                     }
                     else if (_random.NextFloat() <= farmData.PercentRocks)
                     {
                         var newRock = EntityManager.Instantiate(farmData.RockPrefab);
-                        EntityManager.SetComponentData(newRock, fieldPosition);
+                        EntityManager.SetComponentData(newRock, new Translation() { Value = new float3(x, rockY / 2f, y) });
                         tileState = TileState.Rock;
                         occupiedObject = newRock;
                     }

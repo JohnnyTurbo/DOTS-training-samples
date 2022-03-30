@@ -78,8 +78,6 @@ namespace AutoFarmers
                         y += dy;
                     }
 
-                 
-                    
                     if (curBestTask == TaskTypes.None)
                     {
                         bestTilePos = lastValidPos;

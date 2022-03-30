@@ -157,6 +157,7 @@ MonoBehaviour:
   DronePrefab: {fileID: 7376520576645055225, guid: 208609698175a504bb881ebe58731141, type: 3}
   RockPrefab: {fileID: 2014508571397935712, guid: 6dcdb48c31c0e644b93efc19688863ca, type: 3}
   FieldPrefab: {fileID: 2956741789312521163, guid: 440274df01c77e04683b2e559b0cb9b4, type: 3}
+  TilledPrefab: {fileID: 2956741789312521163, guid: 824018c42987c95408d5af68764f0516, type: 3}
   SiloPrefab: {fileID: 2772964537978156645, guid: 3a3e67331d0c67e4ea92d3bda980e438, type: 3}
   PlantPrefab: {fileID: 1953579196360212340, guid: a629cd5108a0dbd439b6877ee5f61a4b, type: 3}
   PlantGrowthRate: 0.1
