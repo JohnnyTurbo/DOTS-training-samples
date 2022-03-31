@@ -4,7 +4,7 @@ using Unity.Transforms;
 
 namespace AutoFarmers
 {
-    public partial class FarmerMovementSystem : SystemBase
+    public partial class WorkerMovementSystem : SystemBase
     {
         private EndSimulationEntityCommandBufferSystem _ecbSystem;
         
@@ -16,17 +16,18 @@ namespace AutoFarmers
         protected override void OnUpdate()
         {
             var time = Time.DeltaTime;
+            var distanceThreshold = GetSingleton<FarmData>().DistanceThreshold;
             var ecb = _ecbSystem.CreateCommandBuffer().AsParallelWriter();
-
+            
             Entities
                 .WithAll<TargetData>()
                 .WithAny<FarmerTag, DroneTag>()
-                .ForEach((Entity e, int entityInQueryIndex, ref Translation translation, ref DynamicBuffer<PathBufferElement> pathBuffer, in SpeedData speed) =>
+                .ForEach((Entity workerEntity, int entityInQueryIndex, ref Translation translation, ref DynamicBuffer<PathBufferElement> pathBuffer, in SpeedData speed) =>
                 {
                     if (pathBuffer.Length == 0)
                     {
                         //reached target
-                        ecb.RemoveComponent<TargetData>(entityInQueryIndex, e);
+                        ecb.RemoveComponent<TargetData>(entityInQueryIndex, workerEntity);
                         return;
                     }
                     
@@ -34,9 +35,7 @@ namespace AutoFarmers
                     
                     var distance = math.distance(destination, translation.Value);
 
-                    var threshold = 0.1;
-                    
-                    if (distance > threshold)
+                    if (distance > distanceThreshold)
                     {
                         var direction = destination - translation.Value;
                         var directionNormalized = math.normalize((direction));

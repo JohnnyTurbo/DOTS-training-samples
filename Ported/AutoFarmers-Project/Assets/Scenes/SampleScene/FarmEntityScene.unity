@@ -163,7 +163,8 @@ MonoBehaviour:
   PlantGrowthRate: 0.1
   PercentSilos: 0.015
   PercentRocks: 0.2
-  DroneTimeout: 0
+  DroneTimeout: 3
+  DistanceThreshold: 0.05
   SearchRadiusIncrement: 5
   HarvestThreshold: 2
   DroneThreshold: 2
