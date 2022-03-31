@@ -1,33 +1,32 @@
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
 
 namespace AutoFarmers
 {
     public partial class FarmerMovementSystem : SystemBase
     {
-        private EndSimulationEntityCommandBufferSystem CommandBufferSystem;
+        private EndSimulationEntityCommandBufferSystem _ecbSystem;
         
         protected override void OnCreate()
         {
-            CommandBufferSystem = World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>();
+            _ecbSystem = World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>();
         }
         
         protected override void OnUpdate()
         {
             var time = Time.DeltaTime;
-            var ecb = CommandBufferSystem.CreateCommandBuffer();
+            var ecb = _ecbSystem.CreateCommandBuffer().AsParallelWriter();
 
             Entities
                 .WithAll<TargetData>()
                 .WithAny<FarmerTag, DroneTag>()
-                .ForEach((Entity e, ref Translation translation, ref DynamicBuffer<PathBufferElement> pathBuffer, in SpeedData speed) =>
+                .ForEach((Entity e, int entityInQueryIndex, ref Translation translation, ref DynamicBuffer<PathBufferElement> pathBuffer, in SpeedData speed) =>
                 {
                     if (pathBuffer.Length == 0)
                     {
                         //reached target
-                        ecb.RemoveComponent<TargetData>(e);
+                        ecb.RemoveComponent<TargetData>(entityInQueryIndex, e);
                         return;
                     }
                     
@@ -46,10 +45,9 @@ namespace AutoFarmers
                     }
                     else // waypoint reached
                     {
-                        //Debug.Log("waypoint reached");
                         pathBuffer.RemoveAt((0));
                     }
-                }).Run();
+                }).ScheduleParallel();
         }
     }
 }
