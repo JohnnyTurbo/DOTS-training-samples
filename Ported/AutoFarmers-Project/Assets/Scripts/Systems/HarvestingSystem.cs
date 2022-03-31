@@ -38,10 +38,7 @@ namespace AutoFarmers
                     var plant = tile.OccupiedObject;
                     tile.OccupiedObject = Entity.Null;
                     farmBuffer[tileIndex] = tile;
-                    ecb.AddComponent<Parent>(plant);
-                    ecb.AddComponent<LocalToParent>(plant);
-                    ecb.SetComponent(plant, new Translation() { Value = new float3(0, 1, 0) });
-                    ecb.SetComponent(plant, new Parent() { Value = e });
+                    ecb.AddComponent(e, new CarryData() { carriedEntity = plant });
 
                     int2 startingPos = translation.Value.ToTileIndex();
                     var siloPos = farmBuffer[tileIndex].ClosestSiloLocation;
