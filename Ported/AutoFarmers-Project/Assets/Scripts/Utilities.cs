@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Dynamic;
+using UnityEngine;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -8,7 +9,7 @@ namespace AutoFarmers
     public static class Utilities
     {
         public static int FlatIndex(int x, int y, int h) => h * x + y;
-
+        
         public static int2 ToTileIndex(this float3 position)
         {
             return new int2((int)math.round(position.x), (int)math.round(position.z));
@@ -35,6 +36,12 @@ namespace AutoFarmers
 
         public struct AStarPathfinding
         {
+            private bool isValidOverride;
+            public void SetValidOverride(bool isValidOverride)
+            {
+                this.isValidOverride = isValidOverride;
+            }
+                
             NativeList<PathfindingNode> Map;
             int2 MapSize;
             int MapCapacity => MapSize.x * MapSize.y;
@@ -43,7 +50,8 @@ namespace AutoFarmers
             {
                 MapSize = farmSize;
                 int farmCapacity = MapSize.x * MapSize.y;
-
+                isValidOverride = false;
+                
                 Map = new NativeList<PathfindingNode>(farmCapacity, Allocator.Temp);
 
                 for (var i = 0; i < MapSize.x; ++i)
@@ -71,6 +79,7 @@ namespace AutoFarmers
                     }
                 }
             }
+        
 
             public NativeList<int2> FindPath(int2 startPos, int2 endPos)
             {
@@ -217,30 +226,29 @@ namespace AutoFarmers
 
             public PathfindingNode GetTileAt(int2 pos)
             {
-                return GetTileAt(FlatIndex(pos.x, pos.y));
-            }
-
-            public PathfindingNode GetTileAt(int index)
-            {
-                if (IsValidIndex(index))
-                    return Map[index];
+                if (IsValidPosition(pos))
+                {
+                    return Map[FlatIndex(pos.x, pos.y)];
+                }
+  
                 return InvalidNode;
             }
 
-            public bool IsValidIndex(int index)
+            public bool IsValidIndex(int2 pos)
             {
-                return index >= 0 && index < MapCapacity;
+                return pos.x >= 0 && pos.x < MapSize.x && pos.y >= 0 && pos.y < MapSize.y;
             }
 
             public bool IsValidPosition(int2 pos)
             {
-                var index = FlatIndex(pos.x, pos.y);
-
-                var isValidIndex = IsValidIndex(index);
+                var isValidIndex = IsValidIndex(pos);
                 if (!isValidIndex)
                     return false;
 
-                var isValid = Map[index].IsValid;
+                var index = FlatIndex(pos.x, pos.y);
+                
+                
+                var isValid = Map[index].IsValid || isValidOverride;
                 return isValid;
             }
 

@@ -162,7 +162,7 @@ MonoBehaviour:
   PlantPrefab: {fileID: 1953579196360212340, guid: a629cd5108a0dbd439b6877ee5f61a4b, type: 3}
   PlantGrowthRate: 0.1
   PercentSilos: 0.015
-  PercentRocks: 0.2
+  PercentRocks: 0.8
   DroneTimeout: 3
   DistanceThreshold: 0.05
   SearchRadiusIncrement: 5
@@ -172,8 +172,8 @@ MonoBehaviour:
   DefaultFarmerSearchRadius: 5
   DefaultDroneSearchRadius: 5
   FarmSize:
-    x: 25
-    y: 25
+    x: 10
+    y: 10
 --- !u!4 &556232102
 Transform:
   m_ObjectHideFlags: 0

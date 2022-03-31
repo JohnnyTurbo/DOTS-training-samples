@@ -29,6 +29,7 @@ namespace AutoFarmers
                 .WithNone<TargetData>()
                 .ForEach((Entity e, ref DynamicBuffer<PathBufferElement> pathBuffer, in Translation translation) =>
                 {
+                   
                     var gridPos = translation.Value.ToTileIndex();
                     var tileIndex = Utilities.FlatIndex(gridPos.x, gridPos.y, farmData.FarmSize.y);
                     TileBufferElement tile = farmBuffer[tileIndex];
@@ -43,12 +44,19 @@ namespace AutoFarmers
                     int2 startingPos = translation.Value.ToTileIndex();
                     var siloPos = farmBuffer[tileIndex].ClosestSiloLocation;
 
-                    if (HasComponent<FarmerTag>(e) && startingPos.x != siloPos.x)
-                    {
-                        pathBuffer.Add(new PathBufferElement { Value = new int2(siloPos.x, startingPos.y) });
+                    if (HasComponent<FarmerTag>(e))
+                    { 
+                        Utilities.AStarPathfinding aStar = new Utilities.AStarPathfinding(farmBuffer, farmData.FarmSize);
+                        var path = aStar.FindPath(startingPos, siloPos);
+                        foreach (var tilePath in path)
+                        {
+                            pathBuffer.Add(new PathBufferElement { Value = tilePath });
+                        }
                     }
-
-                    pathBuffer.Add(new PathBufferElement { Value = siloPos });
+                    else
+                    {
+                         pathBuffer.Add(new PathBufferElement { Value = siloPos });
+                    }
 
                     ecb.AddComponent<TargetData>(e);
                     ecb.RemoveComponent<HarvestingTag>(e);
