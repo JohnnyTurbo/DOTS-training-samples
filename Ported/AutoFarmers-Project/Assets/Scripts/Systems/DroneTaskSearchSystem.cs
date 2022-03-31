@@ -25,7 +25,7 @@ namespace AutoFarmers
                 .WithNone<TargetData, HarvestingTag, DepositingTag>()
                 .WithNone<Timeout>()
                 .WithAll<DroneTag>()
-                .ForEach((Entity e, ref SearchRadiusData radius, ref DynamicBuffer<PathBufferElement> pathBuffer, /*ref RandomData random,*/ in Translation translation) =>
+                .ForEach((Entity e, ref SearchRadiusData radius, ref DynamicBuffer<PathBufferElement> pathBuffer, in Translation translation) =>
                 {
                     var invalidPos = new int2(-1, -1);
                     var bestTilePos = invalidPos;
@@ -43,16 +43,13 @@ namespace AutoFarmers
                     {
                         for (var j = startY; j < endY; ++j)
                         {
-                            int2 curPosition = /*startingPos +*/ new int2(i, j);
-                            //if (!(curPosition.x < 0 || curPosition.x >= X || curPosition.y < 0 || curPosition.y >= Y))
+                            int2 curPosition = new int2(i, j);
+                            var index = Utilities.FlatIndex(curPosition.x, curPosition.y, farmSize.y);
+                            var tile = farmBuffer[index];
+                            if (!tile.IsTargeted && tile.TileState == TileState.Harvestable)
                             {
-                                var index = Utilities.FlatIndex(curPosition.x, curPosition.y, farmSize.y);
-                                var tile = farmBuffer[index];
-                                if (!tile.IsTargeted && tile.TileState == TileState.Harvestable)
-                                {
-                                    bestTilePos = curPosition;
-                                    break;
-                                }
+                                bestTilePos = curPosition;
+                                break;
                             }
                         }
                     }

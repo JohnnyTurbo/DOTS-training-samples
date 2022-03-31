@@ -58,7 +58,7 @@ namespace AutoFarmers
                             {
                                 farmStats.DroneCount += 1;
                                 siloStats.DroneCount += 1;
-                                
+
                                 var droneEntity = EntityManager.Instantiate(farmData.DronePrefab);
                                 var dronePosition = new Translation
                                 {
@@ -75,7 +75,7 @@ namespace AutoFarmers
                         {
                             farmStats.FarmerCount += 1;
                             siloStats.FarmerCount += 1;
-                            
+
                             // Spawn farmers
                             var farmerEntity = EntityManager.Instantiate(farmData.FarmerPrefab);
                             var farmerPosition = new Translation

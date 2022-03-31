@@ -1,6 +1,8 @@
-﻿using Unity.Entities;
+﻿using UnityEngine;
+using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using static AutoFarmers.Utilities;
 
 namespace AutoFarmers
 {
@@ -25,7 +27,7 @@ namespace AutoFarmers
                 .WithNone<TargetData, MiningTaskTag, DepositingTag>()
                 .WithNone<HarvestingTag, PlantingTag, TillingTag>()
                 .WithAll<FarmerTag>()
-                .ForEach((Entity e, ref SearchRadiusData radius, ref DynamicBuffer<PathBufferElement> pathBuffer, /*ref RandomData random,*/ in Translation translation) =>
+                .ForEach((Entity e, ref SearchRadiusData radius, ref DynamicBuffer<PathBufferElement> pathBuffer, in Translation translation) =>
                 {
                     var curBestTask = TaskTypes.None;
                     var bestTilePos = new int2(-1, -1);
@@ -46,29 +48,26 @@ namespace AutoFarmers
                     {
                         for (var j = startY; j < endY; ++j)
                         {
-                            int2 curPosition = /*startingPos +*/ new int2(i, j);
-                            //if (!(curPosition.x < 0 || curPosition.x >= X || curPosition.y < 0 || curPosition.y >= Y))
-                            {
-                                lastValidPos = curPosition;
+                            int2 curPosition = new int2(i, j);
+                            lastValidPos = curPosition;
 
-                                var index = Utilities.FlatIndex(curPosition.x, curPosition.y, farmSize.y);
-                                var tile = farmBuffer[index];
-                                if (!tile.IsTargeted)
+                            var index = Utilities.FlatIndex(curPosition.x, curPosition.y, farmSize.y);
+                            var tile = farmBuffer[index];
+                            if (!tile.IsTargeted)
+                            {
+                                var tileTaskType = tile.TileState.ToTaskType();
+                                if (tileTaskType < curBestTask)
                                 {
-                                    var tileTaskType = tile.TileState.ToTaskType();
-                                    if (tileTaskType < curBestTask)
+                                    curBestTask = tileTaskType;
+                                    bestTilePos = curPosition;
+                                }
+                                else if (tileTaskType == curBestTask)
+                                {
+                                    var distance = math.distancesq(curPosition, startingPos);
+                                    if (distance < bestDistance)
                                     {
-                                        curBestTask = tileTaskType;
+                                        bestDistance = distance;
                                         bestTilePos = curPosition;
-                                    }
-                                    else if (tileTaskType == curBestTask)
-                                    {
-                                        var distance = math.distancesq(curPosition, startingPos);
-                                        if (distance < bestDistance)
-                                        {
-                                            bestDistance = distance;
-                                            bestTilePos = curPosition;
-                                        }
                                     }
                                 }
                             }
@@ -90,13 +89,28 @@ namespace AutoFarmers
                         radius.Value = farmData.DefaultFarmerSearchRadius;
                     }
 
-                    //Debug.Log($"Cur Best Task: {curBestTask} at pos: {bestTilePos}");                    
-                    if (startingPos.x != bestTilePos.x)
-                    {
-                        pathBuffer.Add(new PathBufferElement { Value = new int2(bestTilePos.x, startingPos.y) });
-                    }
+                    //AStarPathfinding aStar = new AStarPathfinding(farmBuffer, farmSize);
+                    //var path = aStar.FindPath(startingPos, bestTilePos);
 
-                    pathBuffer.Add(new PathBufferElement { Value = bestTilePos });
+                    //if (path.IsEmpty)
+                    //{
+                    //    Debug.Log("No path found");
+                    //}
+                    //else
+                    {
+                        Debug.Log($"Cur Best Task: {curBestTask} at pos: {bestTilePos}");
+                        if (startingPos.x != bestTilePos.x)
+                        {
+                            pathBuffer.Add(new PathBufferElement { Value = new int2(bestTilePos.x, startingPos.y) });
+                        }
+
+                        pathBuffer.Add(new PathBufferElement { Value = bestTilePos });
+
+                        //foreach (var tilePos in path)
+                        //{
+                        //    pathBuffer.Add(new PathBufferElement { Value = tilePos });
+                        //}
+                    }
 
                     ecb.AddComponent<TargetData>(e);
 

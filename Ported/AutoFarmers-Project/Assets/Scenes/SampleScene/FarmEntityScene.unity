@@ -171,8 +171,8 @@ MonoBehaviour:
   DefaultFarmerSearchRadius: 5
   DefaultDroneSearchRadius: 5
   FarmSize:
-    x: 50
-    y: 50
+    x: 25
+    y: 25
 --- !u!4 &556232102
 Transform:
   m_ObjectHideFlags: 0
