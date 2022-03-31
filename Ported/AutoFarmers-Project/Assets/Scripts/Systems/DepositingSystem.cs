@@ -27,7 +27,7 @@ namespace AutoFarmers
                 .WithAll<DepositingTag>()
                 .WithAny<FarmerTag, DroneTag>()
                 .WithNone<TargetData>()
-                .ForEach((Entity e, in DynamicBuffer<Child> childBuffer, in Translation translation) =>
+                .ForEach((Entity e, ref CarryData carried, in Translation translation) =>
                 {
                     var currentPosition = translation.Value.ToTileIndex();
                     var index = Utilities.FlatIndex(currentPosition.x, currentPosition.y, farmData.FarmSize.y);
@@ -36,8 +36,9 @@ namespace AutoFarmers
                     TileBufferElement tile = farmBuffer[index];
                     var silo = tile.OccupiedObject;
 
-                    var plant = childBuffer[0].Value;
+                    var plant = carried.carriedEntity;
                     ecb.DestroyEntity(plant);
+                    ecb.RemoveComponent<CarryData>(e);
 
                     ecb.RemoveComponent<DepositingTag>(e);
 
