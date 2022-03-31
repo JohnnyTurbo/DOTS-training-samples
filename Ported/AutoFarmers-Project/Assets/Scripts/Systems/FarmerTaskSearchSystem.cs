@@ -123,7 +123,8 @@ namespace AutoFarmers
                     }
                     else
                     {
-                        ecb.AddComponent(e, (curBestTask.TaskType()));
+                        ecb.SetComponent(e, new CurrentTask{Value = curBestTask});
+                        
                         var tileIndex = Utilities.FlatIndex(bestTilePos.x, bestTilePos.y, farmSize.y);
                         var destinationTile = farmBuffer[tileIndex];
                         destinationTile.IsTargeted = true;

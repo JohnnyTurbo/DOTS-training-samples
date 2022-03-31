@@ -19,12 +19,10 @@ namespace AutoFarmers
         {
             var ecb = CommandBufferSystem.CreateCommandBuffer();
 
-            Entities
-                .WithAll<CarryData>()
-                .ForEach((Entity e, ref CarryData carry, in Translation translation) =>
+            Entities.ForEach((Entity e, ref CarriedEntity carry, in Translation translation) =>
                 {
-                    float3 carryPos = new float3(translation.Value.x, translation.Value.y + CarryYOffset, translation.Value.z);
-                    ecb.SetComponent(carry.carriedEntity, new Translation() { Value = carryPos });
+                    var carryPos = new float3(translation.Value.x, translation.Value.y + CarryYOffset, translation.Value.z);
+                    ecb.SetComponent(carry.Value, new Translation() { Value = carryPos });
                 }).Run();
         }
     }

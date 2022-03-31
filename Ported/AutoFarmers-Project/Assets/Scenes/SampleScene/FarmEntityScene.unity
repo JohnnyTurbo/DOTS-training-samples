@@ -153,18 +153,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42f2d5cf934241ffb2c20d23eb6af5d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FarmerPrefab: {fileID: 7343767982323768252, guid: eeb16387bcf37c74c88eeb38246712dc, type: 3}
-  DronePrefab: {fileID: 7376520576645055225, guid: 208609698175a504bb881ebe58731141, type: 3}
-  RockPrefab: {fileID: 2014508571397935712, guid: 6dcdb48c31c0e644b93efc19688863ca, type: 3}
-  FieldPrefab: {fileID: 2956741789312521163, guid: 440274df01c77e04683b2e559b0cb9b4, type: 3}
-  TilledPrefab: {fileID: 2956741789312521163, guid: 824018c42987c95408d5af68764f0516, type: 3}
-  SiloPrefab: {fileID: 2772964537978156645, guid: 3a3e67331d0c67e4ea92d3bda980e438, type: 3}
-  PlantPrefab: {fileID: 1953579196360212340, guid: a629cd5108a0dbd439b6877ee5f61a4b, type: 3}
-  PlantGrowthRate: 0.1
+  FarmerPrefab: {fileID: 7343767982323768252, guid: eeb16387bcf37c74c88eeb38246712dc,
+    type: 3}
+  DronePrefab: {fileID: 7376520576645055225, guid: 208609698175a504bb881ebe58731141,
+    type: 3}
+  RockPrefab: {fileID: 2014508571397935712, guid: 6dcdb48c31c0e644b93efc19688863ca,
+    type: 3}
+  FieldPrefab: {fileID: 5595764518230071180, guid: d9629f98f77083e48bb53a5d42cf07fb,
+    type: 3}
+  TilledPrefab: {fileID: 804965826436903024, guid: 01d279d4a0f1d544aa056115c057e805,
+    type: 3}
+  SiloPrefab: {fileID: 2772964537978156645, guid: 3a3e67331d0c67e4ea92d3bda980e438,
+    type: 3}
+  PlantPrefab: {fileID: 1953579196360212340, guid: a629cd5108a0dbd439b6877ee5f61a4b,
+    type: 3}
+  PlantGrowthRate: 0.25
   PercentSilos: 0.015
   PercentRocks: 0.8
   DroneTimeout: 3
-  DistanceThreshold: 0.05
+  DistanceThreshold: 0.1
   SearchRadiusIncrement: 5
   HarvestThreshold: 2
   DroneThreshold: 2

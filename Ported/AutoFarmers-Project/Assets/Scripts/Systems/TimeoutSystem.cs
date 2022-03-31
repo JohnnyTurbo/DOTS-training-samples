@@ -14,16 +14,16 @@ namespace AutoFarmers
         protected override void OnUpdate()
         {
             var deltaTime = Time.DeltaTime;
-            var ecb = _ecbSystem.CreateCommandBuffer();
+            var ecb = _ecbSystem.CreateCommandBuffer().AsParallelWriter();
             
-            Entities.ForEach((Entity e, ref Timeout timeout) =>
+            Entities.ForEach((Entity e, int entityInQueryIndex, ref Timeout timeout) =>
             {
                 timeout.Value -= deltaTime;
                 if (timeout.Value <= 0)
                 {
-                    ecb.RemoveComponent<Timeout>(e);
+                    ecb.RemoveComponent<Timeout>(entityInQueryIndex, e);
                 }
-            }).Run();
+            }).ScheduleParallel();
         }
     }
 }

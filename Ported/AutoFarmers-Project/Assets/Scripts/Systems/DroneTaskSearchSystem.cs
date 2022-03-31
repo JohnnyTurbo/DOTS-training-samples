@@ -63,7 +63,8 @@ namespace AutoFarmers
                     }
                     else
                     {
-                        ecb.AddComponent<HarvestingTag>(e);
+                        //ecb.AddComponent<HarvestingTag>(e);
+                        SetComponent(e, new CurrentTask{Value = TaskTypes.Harvesting});
                         var tileIndex = Utilities.FlatIndex(bestTilePos.x, bestTilePos.y, farmSize.y);
                         var destinationTile = farmBuffer[tileIndex];
                         destinationTile.IsTargeted = true;
