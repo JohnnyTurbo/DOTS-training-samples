@@ -27,6 +27,9 @@ namespace AutoFarmers
             EntityManager.AddBuffer<SpawnedPlantBufferElement>(farmEntity);
             EntityManager.AddBuffer<SpawnedTileBufferElement>(farmEntity);
 
+            // Guarantee having at least one silo
+            var firstSiloSpawnPosition = _random.NextInt2(int2.zero, farmSize);
+
             for (var x = 0; x < farmSize.x; x++)
             {
                 for (var y = 0; y < farmSize.y; y++)
@@ -38,19 +41,29 @@ namespace AutoFarmers
                     var tileState = TileState.Empty;
                     var occupiedObject = Entity.Null;
 
-                    if (_random.NextFloat() <= farmData.PercentSilos)
+                    if (!(firstSiloSpawnPosition.x == x && firstSiloSpawnPosition.y == y))
+                    {
+                        if (_random.NextFloat() <= farmData.PercentSilos)
+                        {
+                            var newSilo = EntityManager.Instantiate(farmData.SiloPrefab);
+                            EntityManager.SetComponentData(newSilo, new Translation() { Value = new float3(x, siloY, y) });
+                            tileState = TileState.Silo;
+                            occupiedObject = newSilo;
+                        }
+                        else if (_random.NextFloat() <= farmData.PercentRocks)
+                        {
+                            var newRock = EntityManager.Instantiate(farmData.RockPrefab);
+                            EntityManager.SetComponentData(newRock, new Translation() { Value = new float3(x, rockY / 2f, y) });
+                            tileState = TileState.Rock;
+                            occupiedObject = newRock;
+                        }
+                    }
+                    else
                     {
                         var newSilo = EntityManager.Instantiate(farmData.SiloPrefab);
-                        EntityManager.SetComponentData(newSilo, new Translation() {Value = new float3(x, siloY, y) });
+                        EntityManager.SetComponentData(newSilo, new Translation() { Value = new float3(x, siloY, y) });
                         tileState = TileState.Silo;
                         occupiedObject = newSilo;
-                    }
-                    else if (_random.NextFloat() <= farmData.PercentRocks)
-                    {
-                        var newRock = EntityManager.Instantiate(farmData.RockPrefab);
-                        EntityManager.SetComponentData(newRock, new Translation() { Value = new float3(x, rockY / 2f, y) });
-                        tileState = TileState.Rock;
-                        occupiedObject = newRock;
                     }
 
                     var newTileBufferElement = new TileBufferElement
@@ -80,7 +93,9 @@ namespace AutoFarmers
                     int Y = farmData.FarmSize.y;
                     int maxTiles = (int)(math.pow(math.max(X, Y), 2)) * 4;
                     int2 startingPos = new int2(startX, startY);
-                    int2 siloPos = new int2();
+                    int2 siloPos = new int2(-1, -1);
+                    
+                    bool siloFound = false;
 
                     for (var i = 0; i < maxTiles; i++)
                     {
@@ -95,6 +110,7 @@ namespace AutoFarmers
                                 if (curTile.TileState == TileState.Silo)
                                 {
                                     siloPos = curPosition;
+                                    siloFound = true;
                                     break;
                                 }
                             }
@@ -110,6 +126,9 @@ namespace AutoFarmers
                         x += dx;
                         y += dy;
                     }
+
+                    if (!siloFound)
+                        siloPos = firstSiloSpawnPosition;
 
                     var index = Utilities.FlatIndex(startX, startY, farmSize.y);
                     var tile = farmBuffer[index];

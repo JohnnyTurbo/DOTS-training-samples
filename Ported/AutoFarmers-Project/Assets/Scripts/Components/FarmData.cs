@@ -18,7 +18,8 @@ namespace AutoFarmers
         public float PercentSilos;
         public float PercentRocks;
         public float DroneTimeout;
-        
+
+        public int SearchRadiusIncrement;
         public int HarvestThreshold; // number of harvests before spawning a farmer
         public int DroneThreshold;
         public int DronesToSpawn;

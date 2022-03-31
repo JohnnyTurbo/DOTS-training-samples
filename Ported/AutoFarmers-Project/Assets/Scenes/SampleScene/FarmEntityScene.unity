@@ -163,16 +163,16 @@ MonoBehaviour:
   PlantGrowthRate: 0.1
   PercentSilos: 0.015
   PercentRocks: 0.2
-  DroneTimeout: 2
+  DroneTimeout: 0
+  SearchRadiusIncrement: 5
   HarvestThreshold: 2
   DroneThreshold: 2
   DronesToSpawn: 1
-  DefaultFarmerSearchRadius: 50
-  DefaultDroneSearchRadius: 50
+  DefaultFarmerSearchRadius: 5
+  DefaultDroneSearchRadius: 5
   FarmSize:
-    x: 250
-    y: 250
-  TilledColor: {r: 0.8962264, g: 0.69454587, b: 0.13950695, a: 1}
+    x: 50
+    y: 50
 --- !u!4 &556232102
 Transform:
   m_ObjectHideFlags: 0

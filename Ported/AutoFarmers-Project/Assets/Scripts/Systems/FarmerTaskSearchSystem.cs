@@ -7,7 +7,7 @@ namespace AutoFarmers
     public partial class FarmerTaskSearchSystem : SystemBase
     {
         private EndSimulationEntityCommandBufferSystem _ecbSystem;
-        
+
         protected override void OnStartRunning()
         {
             _ecbSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
@@ -25,7 +25,7 @@ namespace AutoFarmers
                 .WithNone<TargetData, MiningTaskTag, DepositingTag>()
                 .WithNone<HarvestingTag, PlantingTag, TillingTag>()
                 .WithAll<FarmerTag>()
-                .ForEach((Entity e, ref SearchRadiusData radius, ref DynamicBuffer<PathBufferElement> pathBuffer, ref RandomData random, in Translation translation) =>
+                .ForEach((Entity e, ref SearchRadiusData radius, ref DynamicBuffer<PathBufferElement> pathBuffer, /*ref RandomData random,*/ in Translation translation) =>
                 {
                     var curBestTask = TaskTypes.None;
                     var bestTilePos = new int2(-1, -1);
@@ -35,21 +35,19 @@ namespace AutoFarmers
                     int X = farmSize.x;
                     int Y = farmSize.y;
 
-                    int x, y, dx, dy;
-                    x = y = 0;                    
-                    do
-                    {
-                        dy = random.Value.NextInt(-1, 2);
-                        dx = random.Value.NextInt(-1, 2);
-                    } while (dx == 0 && dy == 0);
-                    
+                    var startX = math.clamp(startingPos.x - radius.Value / 2, 0, farmSize.x);
+                    var endX = math.clamp(startingPos.x + radius.Value / 2, 0, farmSize.x);
+                    var startY = math.clamp(startingPos.y - radius.Value / 2, 0, farmSize.y);
+                    var endY = math.clamp(startingPos.y + radius.Value / 2, 0, farmSize.y);
 
-                    for (var i = 0; i < radius.Value; i++)
+                    var bestDistance = float.MaxValue;
+
+                    for (var i = startX; i < endX; ++i)
                     {
-                        if ((-X / 2 <= x) && (x <= X / 2) && (-Y / 2 <= y) && (y <= Y / 2))
+                        for (var j = startY; j < endY; ++j)
                         {
-                            int2 curPosition = startingPos + new int2(x, y);
-                            if (!(curPosition.x < 0 || curPosition.x >= X || curPosition.y < 0 || curPosition.y >= Y))
+                            int2 curPosition = /*startingPos +*/ new int2(i, j);
+                            //if (!(curPosition.x < 0 || curPosition.x >= X || curPosition.y < 0 || curPosition.y >= Y))
                             {
                                 lastValidPos = curPosition;
 
@@ -63,25 +61,24 @@ namespace AutoFarmers
                                         curBestTask = tileTaskType;
                                         bestTilePos = curPosition;
                                     }
+                                    else if (tileTaskType == curBestTask)
+                                    {
+                                        var distance = math.distancesq(curPosition, startingPos);
+                                        if (distance < bestDistance)
+                                        {
+                                            bestDistance = distance;
+                                            bestTilePos = curPosition;
+                                        }
+                                    }
                                 }
                             }
                         }
-
-                        if ((x == y) || ((x < 0) && (x == -y)) || ((x > 0) && (x == 1 - y)))
-                        {
-                            var t = dx;
-                            dx = -dy;
-                            dy = t;
-                        }
-
-                        x += dx;
-                        y += dy;
                     }
 
                     if (curBestTask == TaskTypes.None)
                     {
                         bestTilePos = lastValidPos;
-                        radius.Value = math.min(radius.Value * 2, farmData.MaxFarmSize);
+                        radius.Value = math.min(radius.Value + farmData.SearchRadiusIncrement, farmData.MaxFarmSize);
                     }
                     else
                     {
@@ -102,7 +99,7 @@ namespace AutoFarmers
                     pathBuffer.Add(new PathBufferElement { Value = bestTilePos });
 
                     ecb.AddComponent<TargetData>(e);
-                   
+
                 }).Run();
         }
     }
