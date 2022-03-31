@@ -35,7 +35,7 @@ namespace AutoFarmers
 
         public struct AStarPathfinding
         {
-            NativeList<PathfindingNode> Map;
+            NativeList<PathfindingNode> Map; // We could cache the map with the rocks and only update it if there's a change to rocks (e.g. destroyed)
             int2 MapSize;
             int MapCapacity => MapSize.x * MapSize.y;
 
