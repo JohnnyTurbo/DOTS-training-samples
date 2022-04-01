@@ -60,14 +60,11 @@ namespace AutoFarmers
                                 farmStats.DroneCount += 1;
                                 siloStats.DroneCount += 1;
 
-                                var droneEntity = EntityManager.Instantiate(farmData.DronePrefab);
+                                var droneEntity = ecb.Instantiate(farmData.DronePrefab);
                                 var dronePosition = new Translation
                                 {
                                     Value = new float3(currentPosition.x, 2f, currentPosition.y)
                                 };
-                                var droneRandom = EntityManager.GetComponentData<RandomData>(droneEntity);
-                                droneRandom.Value.InitState((uint)droneEntity.Index);
-                                ecb.SetComponent(droneEntity, droneRandom);
                                 ecb.SetComponent(droneEntity, dronePosition);
                             }
                         }
@@ -78,14 +75,11 @@ namespace AutoFarmers
                             siloStats.FarmerCount += 1;
 
                             // Spawn farmers
-                            var farmerEntity = EntityManager.Instantiate(farmData.FarmerPrefab);
+                            var farmerEntity = ecb.Instantiate(farmData.FarmerPrefab);
                             var farmerPosition = new Translation
                             {
                                 Value = new float3(currentPosition.x, 0, currentPosition.y)
                             };
-                            var farmerRandom = EntityManager.GetComponentData<RandomData>(farmerEntity);
-                            farmerRandom.Value.InitState((uint)farmerEntity.Index);
-                            ecb.SetComponent(farmerEntity, farmerRandom);
                             ecb.SetComponent(farmerEntity, farmerPosition);
                         }
                     }
