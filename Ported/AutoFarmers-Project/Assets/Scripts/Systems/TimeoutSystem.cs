@@ -24,6 +24,8 @@ namespace AutoFarmers
                     ecb.RemoveComponent<Timeout>(entityInQueryIndex, e);
                 }
             }).ScheduleParallel();
+            
+            _ecbSystem.AddJobHandleForProducer(Dependency);
         }
     }
 }

@@ -79,10 +79,23 @@ namespace AutoFarmers
                     }
                 }
             }
-        
+
+            private void ResetPath()
+            {
+                for (var i = 0; i < MapSize.x; ++i)
+                {
+                    for (var j = 0; j < MapSize.y; ++j)
+                    {
+                        var mapIndex = Utilities.FlatIndex(i, j, MapSize.y);
+                        ref var tile = ref Map.ElementAt(mapIndex);
+                        tile.CameFrom = new int2(-1, -1);
+                    }
+                }
+            }
 
             public NativeList<int2> FindPath(int2 startPos, int2 endPos)
             {
+                ResetPath();
                 NativeList<int2> openList = new NativeList<int2>(MapCapacity, Allocator.Temp);
                 NativeList<int2> closeList = new NativeList<int2>(MapCapacity, Allocator.Temp);
                 NativeList<int2> result = new NativeList<int2>(MapCapacity, Allocator.Temp);
