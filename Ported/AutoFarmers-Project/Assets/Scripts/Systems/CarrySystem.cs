@@ -17,13 +17,13 @@ namespace AutoFarmers
 
         protected override void OnUpdate()
         {
-            var ecb = CommandBufferSystem.CreateCommandBuffer();
+            var ecb = CommandBufferSystem.CreateCommandBuffer().AsParallelWriter();
 
-            Entities.ForEach((Entity e, ref CarriedEntity carry, in Translation translation) =>
+            Entities.ForEach((Entity e, int entityInQueryIndex, ref CarriedEntity carry, in Translation translation) =>
                 {
                     var carryPos = new float3(translation.Value.x, translation.Value.y + CarryYOffset, translation.Value.z);
-                    ecb.SetComponent(carry.Value, new Translation() { Value = carryPos });
-                }).Run();
+                    ecb.SetComponent(entityInQueryIndex, carry.Value, new Translation() { Value = carryPos });
+                }).ScheduleParallel();
         }
     }
 }

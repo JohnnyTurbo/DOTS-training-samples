@@ -1,7 +1,6 @@
 ﻿using System;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Rendering;
 using Unity.Transforms;
 
 namespace AutoFarmers

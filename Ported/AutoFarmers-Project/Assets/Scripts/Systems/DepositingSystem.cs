@@ -21,26 +21,27 @@ namespace AutoFarmers
             var farmEntity = GetSingletonEntity<FarmData>();
             var farmData = GetSingleton<FarmData>();
             var farmStats = GetComponent<StatsData>(farmEntity);
-            var ecb = CommandBufferSystem.CreateCommandBuffer();
+            var farmBuffer = GetBuffer<TileBufferElement>(farmEntity);
+            var ecb = CommandBufferSystem.CreateCommandBuffer().AsParallelWriter();
 
             Entities
                 .WithAll<DepositingTag>()
                 .WithAny<FarmerTag, DroneTag>()
                 .WithNone<TargetData>()
-                .ForEach((Entity e, ref CarriedEntity carried, ref CurrentTask currentTask, in Translation translation) =>
+                .WithReadOnly(farmBuffer)
+                .ForEach((Entity e, int entityInQueryIndex, ref CarriedEntity carried, ref CurrentTask currentTask, in Translation translation) =>
                 {
                     var currentPosition = translation.Value.ToTileIndex();
                     var index = Utilities.FlatIndex(currentPosition.x, currentPosition.y, farmData.FarmSize.y);
 
-                    var farmBuffer = GetBuffer<TileBufferElement>(farmEntity);
                     TileBufferElement tile = farmBuffer[index];
                     var silo = tile.OccupiedObject;
 
                     var plant = carried.Value;
-                    ecb.DestroyEntity(plant);
-                    ecb.RemoveComponent<CarriedEntity>(e);
+                    ecb.DestroyEntity(entityInQueryIndex, plant);
+                    ecb.RemoveComponent<CarriedEntity>(entityInQueryIndex, e);
 
-                    ecb.RemoveComponent<DepositingTag>(e);
+                    ecb.RemoveComponent<DepositingTag>(entityInQueryIndex, e);
 
                     // Update stats
                     var siloStats = GetComponent<StatsData>(silo);
@@ -60,12 +61,12 @@ namespace AutoFarmers
                                 farmStats.DroneCount += 1;
                                 siloStats.DroneCount += 1;
 
-                                var droneEntity = ecb.Instantiate(farmData.DronePrefab);
+                                var droneEntity = ecb.Instantiate(entityInQueryIndex, farmData.DronePrefab);
                                 var dronePosition = new Translation
                                 {
                                     Value = new float3(currentPosition.x, 2f, currentPosition.y)
                                 };
-                                ecb.SetComponent(droneEntity, dronePosition);
+                                ecb.SetComponent(entityInQueryIndex, droneEntity, dronePosition);
                             }
                         }
 
@@ -75,19 +76,21 @@ namespace AutoFarmers
                             siloStats.FarmerCount += 1;
 
                             // Spawn farmers
-                            var farmerEntity = ecb.Instantiate(farmData.FarmerPrefab);
+                            var farmerEntity = ecb.Instantiate(entityInQueryIndex, farmData.FarmerPrefab);
                             var farmerPosition = new Translation
                             {
                                 Value = new float3(currentPosition.x, 0, currentPosition.y)
                             };
-                            ecb.SetComponent(farmerEntity, farmerPosition);
+                            ecb.SetComponent(entityInQueryIndex, farmerEntity, farmerPosition);
                         }
                     }
 
-                    ecb.SetComponent<StatsData>(silo, siloStats);
-                    ecb.SetComponent<StatsData>(farmEntity, farmStats);
+                    ecb.SetComponent<StatsData>(entityInQueryIndex, silo, siloStats);
+                    ecb.SetComponent<StatsData>(entityInQueryIndex, farmEntity, farmStats);
                     currentTask.Value = TaskTypes.None;
-                }).WithStructuralChanges().Run();
+                }).ScheduleParallel();
+
+            CommandBufferSystem.AddJobHandleForProducer(Dependency);
         }
     }
 }
