@@ -27,7 +27,7 @@ namespace AutoFarmers
                 .WithAll<HarvestingTag>()
                 .WithAny<FarmerTag, DroneTag>()
                 .WithNone<TargetData>()
-                .ForEach((Entity e, ref DynamicBuffer<PathBufferElement> pathBuffer, in Translation translation) =>
+                .ForEach((Entity e, ref DynamicBuffer<PathBufferElement> pathBuffer, in Translation translation, in SearchRadiusData radius) =>
                 {
                    
                     var gridPos = translation.Value.ToTileIndex();
@@ -46,7 +46,7 @@ namespace AutoFarmers
 
                     if (HasComponent<FarmerTag>(e))
                     { 
-                        Utilities.AStarPathfinding aStar = new Utilities.AStarPathfinding(farmBuffer, farmData.FarmSize);
+                        AStarPathfinding aStar = new AStarPathfinding(farmBuffer, farmData.FarmSize, radius.Value);
                         var path = aStar.FindPath(startingPos, siloPos);
                         foreach (var tilePath in path)
                         {

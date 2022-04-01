@@ -137,7 +137,7 @@ namespace AutoFarmers
                 }
             }
 
-            int farmerCount = 1;
+            int farmerCount = 10;
             for (int i = 0; i < farmerCount; i++)
             {
                 farmBuffer = EntityManager.GetBuffer<TileBufferElement>(farmEntity);

@@ -32,7 +32,7 @@ namespace AutoFarmers
                 .WithAll<FarmerTag>()
                 .ForEach((Entity e, ref SearchRadiusData radius, ref DynamicBuffer<PathBufferElement> pathBuffer, in Translation translation) =>
                 {  
-                    AStarPathfinding aStar = new AStarPathfinding(farmBuffer, farmSize);
+                    AStarPathfinding aStar = new AStarPathfinding(farmBuffer, farmSize, radius.Value);
                     var curBestTask = TaskTypes.None;
                     var bestTilePos = new int2(-1, -1);
                     var startingPos = translation.Value.ToTileIndex();

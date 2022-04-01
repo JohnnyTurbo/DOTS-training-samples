@@ -25,15 +25,30 @@ namespace AutoFarmers.Authoring
         {
             _fpsThisSecond = new List<float>();
             _entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+            _farmEntity = Entity.Null;
+            GetFarmEntity();
+        }
+
+        private void GetFarmEntity()
+        {
             var farmQuery = _entityManager.CreateEntityQuery(ComponentType.ReadOnly<FarmData>());
+            if(farmQuery.CalculateEntityCount() == 0){return;}
             _farmEntity = farmQuery.GetSingletonEntity();
             var farmData = _entityManager.GetComponentData<FarmData>(_farmEntity);
             FarmSize.text = $"Farm Size: {farmData.FarmSize.ToString()}";
         }
-
+        
         private void Update()
         {
             RunFPSCounter();
+            if (_farmEntity == Entity.Null)
+            {
+                GetFarmEntity();
+                if (_farmEntity == Entity.Null)
+                {
+                    return;
+                }
+            }
             var farmStats = _entityManager.GetComponentData<StatsData>(_farmEntity);
             FarmerCount.text = $"Farmer Count: {farmStats.FarmerCount}";
             DroneCount.text = $"Drone Count: {farmStats.DroneCount}";

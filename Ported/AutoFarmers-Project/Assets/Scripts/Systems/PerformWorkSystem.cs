@@ -26,7 +26,7 @@ namespace AutoFarmers
             Entities
                 //.WithAll<MiningTaskTag>()
                 //.WithNone<TargetData>()
-                .ForEach((Entity e, ref CurrentTask currentTask, ref DynamicBuffer<PathBufferElement> pathBuffer, in Translation translation) =>
+                .ForEach((Entity e, ref CurrentTask currentTask, ref DynamicBuffer<PathBufferElement> pathBuffer, in Translation translation, in SearchRadiusData radius) =>
                 {
                     if (pathBuffer.Length != 0 || currentTask.Value == TaskTypes.None)
                     {
@@ -46,13 +46,20 @@ namespace AutoFarmers
                             tile.OccupiedObject = Entity.Null;
                             var siloPos = farmBuffer[index].ClosestSiloLocation;
                             
-                            if (HasComponent<FarmerTag>(e) && currentPosition.x != siloPos.x)
-                            {
-                                pathBuffer.Add(new PathBufferElement { Value = new int2(siloPos.x, currentPosition.y) });
+                            if (HasComponent<FarmerTag>(e))
+                            { 
+                                AStarPathfinding aStar = new AStarPathfinding(farmBuffer, farmData.FarmSize, radius.Value);
+                                var path = aStar.FindPath(currentPosition, siloPos);
+                                foreach (var tilePath in path)
+                                {
+                                    pathBuffer.Add(new PathBufferElement { Value = tilePath });
+                                }
                             }
-                            pathBuffer.Add(new PathBufferElement { Value = siloPos });
-                            ecb.AddComponent<DepositingTag>(e);
-                            break;
+                            else
+                            {
+                                pathBuffer.Add(new PathBufferElement { Value = siloPos });
+                            }
+                            ecb.AddComponent<DepositingTag>(e); break;
                         
                         case TaskTypes.Planting:
                             var newPlant = ecb.Instantiate(farmData.PlantPrefab);
